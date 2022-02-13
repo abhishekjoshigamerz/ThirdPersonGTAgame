@@ -7,10 +7,13 @@ public class PlayerController : MonoBehaviour
 {
 
    Vector2 moveDirection;
+   float jumpDirection;
    [SerializeField] float moveSpeed = 2;
    [SerializeField] float maxForwardSpeed = 8;
    float desiredSpeed;
    float forwardSpeed;
+   float jumpSpeed = 150;
+   Rigidbody rb;
    public float turnSpeed = 100;
    const float groundAccel = 5;
    const float groundDecel = 25; 
@@ -21,10 +24,28 @@ public class PlayerController : MonoBehaviour
    {
        get { return !Mathf.Approximately(moveDirection.sqrMagnitude, 0f); }
    }
-
+    //on moving for moving
    public void OnMove(InputAction.CallbackContext context)
    {
        moveDirection = context.ReadValue<Vector2>();
+       
+   }
+    //for jumping
+   public void OnJump(InputAction.CallbackContext context)
+   {
+       jumpDirection = context.ReadValue<float>();
+   }
+
+   void Jump(float direction){
+
+       if(direction>0){
+           rb.AddForce(0,jumpSpeed,0);
+        Debug.Log("Dirction is this jumping"+direction);
+        anim.SetBool("ReadyJump",true);
+        
+       }else{
+        anim.SetBool("ReadyJump",false);   
+       }
        
    }
 
@@ -49,10 +70,12 @@ public class PlayerController : MonoBehaviour
    void Start()
    {
        anim = this.GetComponent<Animator>();
+       rb = this.GetComponent<Rigidbody>(); 
    }
 
    void Update()
    {
        Move(moveDirection);
+       Jump(jumpDirection); 
    }
 }
